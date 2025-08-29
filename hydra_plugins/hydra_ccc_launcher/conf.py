@@ -9,7 +9,7 @@ from omegaconf import DictConfig
 @dataclass
 class CCCLauncherConf:
     """Configuration for the CCC Launcher"""
-    _target_: str = "hydra_plugins.ccc_launcher.ccc_launcher.CCCLauncher"
+    _target_: str = "hydra_plugins.hydra_ccc_launcher.ccc_launcher.CCCLauncher"
     
     # CCC specific configs
     cluster_info: Optional[str] = None  # path to cluster_info.json
@@ -25,5 +25,5 @@ cs.store(
     group="hydra/launcher",
     name="ccc",
     node=CCCLauncherConf,
-    provider="ccc_launcher",
+    provider="ccc_hydra_launcher",
 )

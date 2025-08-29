@@ -14,9 +14,9 @@ setup(
     packages=find_namespace_packages(include=["hydra_plugins.*"]),
     include_package_data=True,
     entry_points={
-        'hydra.launcher': ['ccc = hydra_plugins.ccc_launcher.conf:CCCLauncherConfig'],
+        'hydra.launcher': ['ccc = hydra_plugins.hydra_ccc_launcher.conf:CCCLauncherConfig'],
         "hydra.plugins": [
-            "ccc_launcher = hydra_plugins.ccc_launcher.ccc_launcher",
+            "hydra_ccc_launcher = hydra_plugins.hydra_ccc_launcher.ccc_launcher",
         ]        
     },
     install_requires=['psutil', 'hydra-core>=1.0'],

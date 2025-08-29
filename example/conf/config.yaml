@@ -5,8 +5,8 @@ defaults:
 
 hydra:
   launcher:
-    _target_: hydra_plugins.ccc_launcher.ccc_launcher.CCCLauncher
-    cluster_info: ${oc.env:PWD}/cluster_info.json  # Path to cluster info file
+    _target_: hydra_plugins.hydra_ccc_launcher.ccc_launcher.CCCLauncher
+    cluster_info: ${oc.env:PWD}/cluster_info.json  # Path to cluster info fileless
     num_gpus: 1  # Number of GPUs per job
     min_gpus_per_host: 1  # Minimum GPUs per host
     hosts: null  # Optional: comma-separated list of hosts to use

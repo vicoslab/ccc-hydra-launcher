@@ -1,7 +1,7 @@
 defaults:
   - hydra/launcher/basic
 
-_target_: hydra_plugins.ccc_launcher.ccc_launcher.CCCLauncher
+_target_: hydra_plugins.hydra_ccc_launcher.ccc_launcher.CCCLauncher
 cluster_info: null
 num_gpus: 1
 min_gpus_per_host: 1
