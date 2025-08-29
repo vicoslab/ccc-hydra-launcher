@@ -108,8 +108,8 @@ class CCCLauncher(Launcher):
 
 
                 log.info(f"\t[{i + initial_job_idx}] Launching cmd:\n{' '.join(cmd)}")
-                # Start process in background
-                proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                # Start process with direct output to stdout/stderr
+                proc = subprocess.Popen(cmd)
                 
                 # Store process and its config for later
                 returns.append(
@@ -129,11 +129,8 @@ class CCCLauncher(Launcher):
             # Wait for all processes to complete and collect results
             final_returns = []
             for proc, ret in returns:
-                stdout, stderr = proc.communicate()
-                log.info(f"Job {ret.hydra_cfg.job.id} output:")
-                log.info(stdout.decode())
-                log.info(stderr.decode())
-                
+                # Just wait for process to complete - output is already written to stdout/stderr
+                proc.wait()
                 ret.status = JobStatus.COMPLETED if proc.returncode == 0 else JobStatus.FAILED
                 final_returns.append(ret)
 
