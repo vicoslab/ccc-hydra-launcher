@@ -1,0 +1,32 @@
+# @package _global_
+
+defaults:
+  - override hydra/launcher: ccc
+
+hydra:
+  launcher:
+    _target_: hydra_plugins.ccc_launcher.ccc_launcher.CCCLauncher
+    cluster_info: ${oc.env:PWD}/cluster_info.json  # Path to cluster info file
+    num_gpus: 1  # Number of GPUs per job
+    min_gpus_per_host: 1  # Minimum GPUs per host
+    hosts: null  # Optional: comma-separated list of hosts to use
+    ignore_hosts: null  # Optional: comma-separated list of hosts to ignore
+    gpus_as_single_host: true  # Group GPUs on same host
+    wait_for_available: -1  # Wait policy for GPU availability
+  
+  # Configure Hydra behavior
+  job:
+    chdir: true  # Change working directory for each job
+  sweep:
+    dir: multirun/${now:%Y-%m-%d_%H-%M-%S}  # Output directory for swept configs
+    subdir: ${hydra.job.num}  # Subdirectory for each job
+
+# Your application config goes here
+model:
+  type: resnet50
+  pretrained: true
+
+training:
+  epochs: 10
+  batch_size: 32
+  learning_rate: 0.001

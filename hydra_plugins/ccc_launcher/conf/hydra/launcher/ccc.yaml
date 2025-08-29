@@ -1,0 +1,11 @@
+defaults:
+  - hydra/launcher/basic
+
+_target_: hydra_plugins.ccc_launcher.ccc_launcher.CCCLauncher
+cluster_info: null
+num_gpus: 1
+min_gpus_per_host: 1
+hosts: null
+ignore_hosts: null
+gpus_as_single_host: true
+wait_for_available: -1
