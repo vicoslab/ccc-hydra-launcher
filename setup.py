@@ -6,7 +6,7 @@ def read(file_name):
 
 setup(
     name='ccc-hydra-launcher',
-    version='0.1.0',
+    version='0.2.0',
     description='Hydra launcher plugin for Conda Compute Cluster',
     long_description=read('README.md'),
     author='Domen Tabernik',

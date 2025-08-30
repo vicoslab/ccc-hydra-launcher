@@ -9,3 +9,15 @@ hosts: null
 ignore_hosts: null
 gpus_as_single_host: true
 wait_for_available: -1
+
+# SLURM configuration
+slurm:
+  # General job requirements passed to sbatch
+  job_args: null  # e.g. "--output=logs/%j-node-%t.out --time=01:00:00 --mem-per-gpu=8G --partition=gpu --cpus-per-task=16"
+  # Task specific requirements passed to srun
+  task_args: null  # e.g. "--container-image=my-container:latest"
+  exclusive_node: false
+  gpus_per_task: 1
+
+# Environment variables to pass to the script
+env_vars: null  # e.g. {"MY_VAR": "value", "ANOTHER_VAR": "value2"}

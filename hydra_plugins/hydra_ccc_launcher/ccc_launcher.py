@@ -32,6 +32,26 @@ class CCCLauncher(Launcher):
         self.hydra_context = hydra_context
         self.config = config
 
+    def _setup_env_vars(self) -> Dict[str, str]:
+        """Setup environment variables with CCC_ prefix"""
+        env_vars = {}
+        
+        # Get environment variables from config
+        config_env_vars = self.config.hydra.launcher.get("env_vars", {})
+        if config_env_vars:
+            # Add CCC_ prefix to each variable
+            env_vars.update({f"CCC_{k}": str(v) for k, v in config_env_vars.items()})
+            
+        # Set up SLURM configuration if provided
+        slurm_config = self.config.hydra.launcher.get("slurm", {})
+        if slurm_config:
+            if slurm_config.get("job_args"):
+                env_vars["SLURM_JOB_ARGS"] = str(slurm_config.job_args)
+            if slurm_config.get("task_args"):
+                env_vars["SLURM_TASK_ARGS"] = str(slurm_config.task_args)
+        
+        return env_vars
+
     def cleanup_gpu_file(self, gpu_file: str) -> None:
         """Clean up the GPU allocation file"""
         try:
@@ -56,7 +76,11 @@ class CCCLauncher(Launcher):
 
         log.info(f"CCCLauncher launching {len(job_overrides)} jobs")
         log.info(f"Launching jobs with CCC on cluster...")
-        
+
+        # Setup environment variables
+        env_vars = self._setup_env_vars()
+        if env_vars:
+            log.info(f"Using environment variables: {env_vars}")
 
         # Get launcher config
         launcher_cfg = self.config.hydra.launcher
@@ -74,6 +98,14 @@ class CCCLauncher(Launcher):
             ccc_gpus_cmd.extend(["--ignore_hosts", launcher_cfg.ignore_hosts])
         ccc_gpus_cmd.extend(["--gpus_as_single_host", str(launcher_cfg.gpus_as_single_host)])
         ccc_gpus_cmd.extend(["--wait_for_available", str(launcher_cfg.wait_for_available)])
+
+        # Add SLURM specific arguments
+        slurm_config = self.config.hydra.launcher.get("slurm", {})
+        if slurm_config:
+            if slurm_config.get("exclusive_node"):
+                ccc_gpus_cmd.extend(["--exclusive"])
+            if slurm_config.get("gpus_per_task"):
+                ccc_gpus_cmd.extend(["--gpus-per-task", str(slurm_config.gpus_per_task)])
 
         gpu_file = None
         try:
@@ -108,8 +140,8 @@ class CCCLauncher(Launcher):
 
 
                 log.info(f"\t[{i + initial_job_idx}] Launching cmd:\n{' '.join(cmd)}")
-                # Start process with direct output to stdout/stderr
-                proc = subprocess.Popen(cmd)
+                # Start process with direct output to stdout/stderr and environment variables
+                proc = subprocess.Popen(cmd, env={**os.environ, **env_vars})
                 
                 # Store process and its config for later
                 returns.append(
